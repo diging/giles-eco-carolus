@@ -15,6 +15,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
@@ -29,6 +30,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import edu.asu.diging.gilesecosystem.carolus.core.linnaeus.ILinnaeusService;
+import edu.asu.diging.gilesecosystem.carolus.core.linnaeus.IFileService;
+import edu.asu.diging.gilesecosystem.requests.FileType;
 import edu.asu.diging.gilesecosystem.requests.ICompletedStorageRequest;
 import edu.asu.diging.gilesecosystem.requests.RequestStatus;
 import edu.asu.diging.gilesecosystem.requests.service.ICompletionNotifier;
@@ -54,7 +57,7 @@ public class LinnaeusService implements ILinnaeusService {
     private ISystemMessageHandler messageHandler;
     
     @Autowired
-    private IPathService pathService;
+    private IFileService pathService;
     
     @Autowired
     private ICompletionNotifier completionNotifier;
@@ -84,9 +87,14 @@ public class LinnaeusService implements ILinnaeusService {
     public void runLinnaeus(ICompletedStorageRequest request) {
 
         byte[] text = downloadFile(request.getDownloadUrl());
-
-        Document doc = new Document("", "", "", "", new String(text),
-                Document.Text_raw_type.TEXT, "", null, Document.Type.OTHER, null, "", "",
+        String contentType = new Tika().detect(text);
+        if (!contentType.equals("text/plain") || request.getFileType() != FileType.TEXT) {
+            // if file is not a text file, ignore
+            return;
+        }
+        
+        Document doc = new Document(null, null, null, null, new String(text),
+                Document.Text_raw_type.TEXT, null, null, Document.Type.OTHER, null, "", "",
                 "", "", null);
         TaggedDocument tagged = MatchOperations.matchDocument(speciesMatcher, doc);
         List<Mention> species = tagged.getAllMatches();
