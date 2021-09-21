@@ -11,7 +11,7 @@
         <geco.carolus.version>0.1</geco.carolus.version>
         <geco.requests.version>0.6</geco.requests.version>
         <geco.util.version>0.4.2</geco.util.version>
-        <geco.september.util.version>0.2</geco.september.util.version>
+        <geco.september.util.version>0.3</geco.september.util.version>
         <org.slf4j-version>1.7.5</org.slf4j-version>
         <org.springframework-version>4.3.14.RELEASE</org.springframework-version>
         <spring-security-version>4.2.4.RELEASE</spring-security-version>
