@@ -43,6 +43,7 @@ public class CompletionNotifier extends ACompletionNotifier {
         completionRequest.setContentType("text/csv");
         String filepath = fileService.getStoragePath((ICompletedStorageRequest)request);
         completionRequest.setSize(new File(filepath).length());
+        completionRequest.setGeneratedByService(propertiesManager.getProperty(Properties.APPLICATION_ID));
     }
 
     @Override
